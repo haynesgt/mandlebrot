@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/mathjs/3.16.4/math.js"></script>
+<script>
+
+var loadfn = function() {
+  var canvas = $("#canvas1")[0];
+  var ctx = canvas.getContext("2d");
+  canvasWidth = canvas.width;
+  canvasHeight = canvas.height;
+  var canvasData = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
+  function drawPixel (x, y, r, g, b, a) {
+      var index = (x + y * canvasWidth) * 4;
+      canvasData.data[index + 0] = r;
+      canvasData.data[index + 1] = g;
+      canvasData.data[index + 2] = b;
+      canvasData.data[index + 3] = a;
+  }
+  function updateCanvas() {
+      ctx.putImageData(canvasData, 0, 0);
+  }
+  for (x = 0; x < 1; x+= 1 / canvasWidth) {
+    for (y = 0; y < 1; y += 1 / canvasHeight) {
+      var z = math.complex(-0, 0);
+      var c = math.complex(x * 4 - 2, y * 2 - 1);
+      for (i = 0; i < 50; i += 1) {
+        z = math.add(math.multiply(z, z), c);
+      }
+      if (z.abs() <= 2) {
+        drawPixel(Math.round(x * canvasWidth), Math.round(y * canvasHeight), 0, 0, 0, 255 - z.abs() * 255 / 2);
+      }
+    }
+  }
+
+  updateCanvas();
+}
+document.addEventListener("load", loadfn);
+</script>
+</head>
+<body>
+<canvas id="canvas1" width="800" height="400">
+</canvas>
+</body>
+</html>
